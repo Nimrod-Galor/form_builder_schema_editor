@@ -128,7 +128,11 @@ class UIManager {
                                     <i class="bi bi-grip-vertical drag-handle"></i>
                                 </td>
                                 <td><code>${this.escapeHtml(field.name)}</code></td>
-                                <td><span class="badge bg-info">${field.type}</span></td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        <i class="bi ${this.getFieldTypeIcon(field.type)}"></i> ${field.type}
+                                    </span>
+                                </td>
                                 <td>${this.escapeHtml(field.label || field.title || '-')}</td>
                                 <td>${field.required ? '<i class="bi bi-check-circle text-success"></i>' : '-'}</td>
                                 <td>
@@ -308,8 +312,8 @@ class UIManager {
 
                         <div class="mb-3">
                             <label class="form-label">Field Type *</label>
-                            <select class="form-select" id="fieldType" required>
-                                ${fieldTypes.map(type => `<option value="${type}" ${field.type === type ? 'selected' : ''}>${type}</option>`).join('')}
+                            <select class="form-select field-type-select" id="fieldType" required>
+                                ${fieldTypes.map(type => `<option value="${type}" ${field.type === type ? 'selected' : ''} data-icon="${this.getFieldTypeIcon(type)}">${type}</option>`).join('')}
                             </select>
                         </div>
 
@@ -658,6 +662,24 @@ class UIManager {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // Get icon for field type
+    getFieldTypeIcon(type) {
+        const iconMap = {
+            'plain text': 'bi-file-text',
+            'text': 'bi-input-cursor-text',
+            'email': 'bi-envelope',
+            'tel': 'bi-telephone',
+            'date': 'bi-calendar',
+            'number': 'bi-123',
+            'textarea': 'bi-textarea-t',
+            'select': 'bi-ui-checks',
+            'radio': 'bi-ui-radios',
+            'checkbox': 'bi-check-square'
+        };
+
+        return iconMap[type] || 'bi-circle';
     }
 
     // Show alert
