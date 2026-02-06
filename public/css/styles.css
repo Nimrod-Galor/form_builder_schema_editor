@@ -1,0 +1,345 @@
+/* Custom styles for Form Schema Editor */
+
+/* Body and layout */
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Stages list */
+#stagesList {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.stage-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.stage-item:hover {
+    background-color: #f8f9fa;
+}
+
+.stage-item.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.stage-item.active:hover {
+    background-color: #0b5ed7;
+}
+
+/* Drag and drop styles */
+.stage-item[draggable="true"] {
+    cursor: move;
+}
+
+.stage-item.dragging {
+    opacity: 0.5;
+    background-color: #e9ecef;
+    border: 2px dashed #6c757d;
+}
+
+.stage-item.drag-over {
+    border-top: 3px solid #0d6efd;
+    margin-top: -3px;
+}
+
+.drag-handle {
+    color: #6c757d;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.stage-item:hover .drag-handle {
+    opacity: 1;
+}
+
+.stage-item.active .drag-handle {
+    color: white;
+    opacity: 0.7;
+}
+
+.stage-item.active:hover .drag-handle {
+    opacity: 1;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Fields list */
+#fieldsList {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#fieldsList table {
+    font-size: 0.95rem;
+}
+
+/* Field drag and drop */
+.field-row[draggable="true"] {
+    cursor: move;
+}
+
+.field-row.dragging {
+    opacity: 0.5;
+    background-color: #e9ecef;
+}
+
+.field-row.drag-over {
+    border-top: 2px solid #0d6efd;
+}
+
+.drag-handle-cell {
+    cursor: grab;
+    color: #6c757d;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    text-align: center;
+}
+
+.field-row:hover .drag-handle-cell {
+    opacity: 1;
+}
+
+.drag-handle-cell:active {
+    cursor: grabbing;
+}
+
+#fieldsList code {
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* Cards */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: 600;
+}
+
+/* Buttons */
+.btn-toolbar .btn-group {
+    gap: 0;
+}
+
+/* Modal customization */
+.modal-lg {
+    max-width: 800px;
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Form tabs */
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+}
+
+.nav-tabs .nav-link {
+    color: #495057;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    border-bottom: 2px solid #0d6efd;
+}
+
+/* Form controls */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Input groups in field editor */
+.input-group.mb-2 {
+    gap: 0;
+}
+
+.input-group input[type="text"] {
+    flex: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Empty state styling */
+.text-muted i {
+    opacity: 0.5;
+}
+
+/* Badge customization */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+/* Table hover effect */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Button group in table */
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #stagesList {
+        max-height: 40vh;
+    }
+
+    #fieldsList {
+        max-height: 50vh;
+    }
+
+    .modal-lg {
+        max-width: 95%;
+    }
+
+    .btn-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .btn-toolbar .btn-group {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Stack table for mobile */
+    #fieldsList table {
+        font-size: 0.85rem;
+    }
+
+    #fieldsList th,
+    #fieldsList td {
+        padding: 0.5rem;
+    }
+}
+
+/* RTL Support for Hebrew text */
+[dir="rtl"] {
+    text-align: right;
+}
+
+[dir="rtl"] .btn-toolbar {
+    flex-direction: row-reverse;
+}
+
+/* Utility classes */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Alert positioning */
+.alert.position-fixed {
+    min-width: 300px;
+    max-width: 500px;
+    z-index: 9999;
+}
+
+/* Animation for alerts */
+@keyframes slideDown {
+    from {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+.alert.show {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Schema info card */
+.card-body .mb-2:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Improve field editor layout */
+#fieldEditorContainer .nav-tabs {
+    margin-bottom: 1rem;
+}
+
+#fieldEditorContainer .tab-content {
+    padding-top: 0.5rem;
+}
+
+/* Options/Attributes/Error messages list */
+#optionsList:empty::after,
+#attributesList:empty::after,
+#errorMessagesList:empty::after {
+    content: "No items added yet";
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* File input label */
+label[for="uploadSchemaInput"] {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* Improve stage/field items spacing */
+.list-group-item {
+    padding: 1rem;
+}
+
+.list-group-item h6 {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+/* Loading state (optional enhancement) */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
