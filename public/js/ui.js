@@ -751,6 +751,59 @@ class UIManager {
         this.showToast(fullMessage, 'danger', 'Error');
     }
 
+    // Render lint results
+    renderLintResults(issues) {
+        const lintResults = document.getElementById('lintResults');
+
+        const total = issues.errors.length + issues.warnings.length + issues.suggestions.length;
+
+        if (total === 0) {
+            lintResults.innerHTML = `
+                <div class="alert alert-success mb-0" role="alert">
+                    <i class="bi bi-check-circle-fill"></i> No issues found! Schema looks good.
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+
+        if (issues.errors.length > 0) {
+            html += `
+                <div class="alert alert-danger mb-2" role="alert">
+                    <strong><i class="bi bi-x-circle-fill"></i> Errors (${issues.errors.length}):</strong>
+                    <ul class="mb-0 mt-1">
+                        ${issues.errors.map(err => `<li>${this.escapeHtml(err)}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        if (issues.warnings.length > 0) {
+            html += `
+                <div class="alert alert-warning mb-2" role="alert">
+                    <strong><i class="bi bi-exclamation-triangle-fill"></i> Warnings (${issues.warnings.length}):</strong>
+                    <ul class="mb-0 mt-1">
+                        ${issues.warnings.map(warn => `<li>${this.escapeHtml(warn)}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        if (issues.suggestions.length > 0) {
+            html += `
+                <div class="alert alert-info mb-0" role="alert">
+                    <strong><i class="bi bi-lightbulb-fill"></i> Suggestions (${issues.suggestions.length}):</strong>
+                    <ul class="mb-0 mt-1">
+                        ${issues.suggestions.map(sug => `<li>${this.escapeHtml(sug)}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        lintResults.innerHTML = html;
+    }
+
     // Setup drag and drop for stages
     setupDragAndDrop() {
         const stageItems = document.querySelectorAll('.stage-item');

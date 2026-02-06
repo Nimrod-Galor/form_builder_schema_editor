@@ -501,4 +501,124 @@ class SchemaManager {
     markAsChanged() {
         this.hasUnsavedChanges = true;
     }
+
+    // Schema linting - check for best practices and common issues
+    lintSchema() {
+        const issues = {
+            errors: [],
+            warnings: [],
+            suggestions: []
+        };
+
+        // Check schema ID
+        if (!this.schema.id || this.schema.id === 'new-form') {
+            issues.warnings.push('Schema ID should be customized');
+        }
+
+        if (this.schema.stages.length === 0) {
+            issues.errors.push('Schema has no stages');
+            return issues;
+        }
+
+        // Check each stage
+        this.schema.stages.forEach((stage, stageIndex) => {
+            const stageLabel = stage.label || `Stage ${stageIndex + 1}`;
+
+            // Check for missing labels
+            if (!stage.label) {
+                issues.warnings.push(`Stage "${stage.id}" has no label`);
+            }
+
+            // Check for empty stages
+            if (stage.fields.length === 0) {
+                issues.warnings.push(`Stage "${stageLabel}" has no fields`);
+            }
+
+            // Check fields in stage
+            stage.fields.forEach((field, fieldIndex) => {
+                const fieldLabel = field.label || field.name || `Field ${fieldIndex + 1}`;
+
+                // Required field checks
+                if (!field.label && !field.title && field.type !== 'plain text') {
+                    issues.warnings.push(`Field "${field.name}" in "${stageLabel}" has no label`);
+                }
+
+                // Check for missing helper text on complex fields
+                if (['email', 'tel', 'number'].includes(field.type) && !field.helperText) {
+                    issues.suggestions.push(`Field "${fieldLabel}" in "${stageLabel}" could benefit from helper text`);
+                }
+
+                // Check for missing placeholders on input fields
+                if (['text', 'email', 'tel', 'number'].includes(field.type) && !field.placeholder) {
+                    issues.suggestions.push(`Field "${fieldLabel}" in "${stageLabel}" could have a placeholder`);
+                }
+
+                // Check for required fields without error messages
+                if (field.required && (!field.errorMessages || !field.errorMessages.required)) {
+                    issues.suggestions.push(`Required field "${fieldLabel}" in "${stageLabel}" should have a custom required error message`);
+                }
+
+                // Check select/radio without enough options
+                if (['select', 'radio'].includes(field.type)) {
+                    if (!field.options || field.options.length < 2) {
+                        issues.warnings.push(`Field "${fieldLabel}" in "${stageLabel}" should have at least 2 options`);
+                    }
+                }
+
+                // Check for showIf referencing non-existent fields
+                if (field.showIf && field.showIf.field) {
+                    const referencedField = this.schema.fields.find(f => f.name === field.showIf.field);
+                    if (!referencedField) {
+                        issues.errors.push(`Field "${fieldLabel}" in "${stageLabel}" references non-existent field "${field.showIf.field}" in showIf`);
+                    } else {
+                        // Check if referenced field comes after this field
+                        const referencedStage = this.schema.stages.find(s => s.fields.includes(referencedField));
+                        const currentStageIndex = this.schema.stages.indexOf(stage);
+                        const referencedStageIndex = this.schema.stages.indexOf(referencedStage);
+
+                        if (referencedStageIndex > currentStageIndex) {
+                            issues.warnings.push(`Field "${fieldLabel}" depends on "${field.showIf.field}" which appears in a later stage`);
+                        } else if (referencedStageIndex === currentStageIndex) {
+                            const currentFieldIndex = stage.fields.indexOf(field);
+                            const referencedFieldIndex = stage.fields.indexOf(referencedField);
+                            if (referencedFieldIndex >= currentFieldIndex) {
+                                issues.warnings.push(`Field "${fieldLabel}" depends on "${field.showIf.field}" which appears later in the same stage`);
+                            }
+                        }
+                    }
+                }
+
+                // Check number fields for min/max
+                if (field.type === 'number' && (!field.attributes || !field.attributes.min || !field.attributes.max)) {
+                    issues.suggestions.push(`Number field "${fieldLabel}" in "${stageLabel}" should have min and max attributes`);
+                }
+
+                // Check email fields for custom validation error
+                if (field.type === 'email' && (!field.errorMessages || !field.errorMessages.emailInvalid)) {
+                    issues.suggestions.push(`Email field "${fieldLabel}" in "${stageLabel}" should have a custom emailInvalid error message`);
+                }
+
+                // Check tel fields for pattern
+                if (field.type === 'tel' && (!field.attributes || !field.attributes.pattern)) {
+                    issues.suggestions.push(`Phone field "${fieldLabel}" in "${stageLabel}" should have a pattern attribute for validation`);
+                }
+            });
+        });
+
+        // Check for duplicate stage IDs (shouldn't happen with our validation, but good to check)
+        const stageIds = this.schema.stages.map(s => s.id);
+        const duplicateStageIds = stageIds.filter((id, index) => stageIds.indexOf(id) !== index);
+        if (duplicateStageIds.length > 0) {
+            issues.errors.push(`Duplicate stage IDs found: ${duplicateStageIds.join(', ')}`);
+        }
+
+        // Check for duplicate field names (shouldn't happen, but good to check)
+        const fieldNames = this.schema.fields.map(f => f.name);
+        const duplicateFieldNames = fieldNames.filter((name, index) => fieldNames.indexOf(name) !== index);
+        if (duplicateFieldNames.length > 0) {
+            issues.errors.push(`Duplicate field names found: ${duplicateFieldNames.join(', ')}`);
+        }
+
+        return issues;
+    }
 }

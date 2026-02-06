@@ -55,6 +55,9 @@ function setupEventHandlers() {
         schemaManager.updateSchemaId(e.target.value.trim());
     });
 
+    // Lint schema button
+    document.getElementById('lintSchemaBtn').addEventListener('click', handleLintSchema);
+
     // Stage buttons
     document.getElementById('addStageBtn').addEventListener('click', () => {
         ui.openStageEditor();
@@ -195,6 +198,21 @@ function getTimeAgo(date) {
     if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
     return `${Math.floor(seconds / 86400)} days ago`;
+}
+
+// Handle lint schema
+function handleLintSchema() {
+    const issues = schemaManager.lintSchema();
+    ui.renderLintResults(issues);
+
+    const total = issues.errors.length + issues.warnings.length + issues.suggestions.length;
+
+    if (total === 0) {
+        ui.showToast('No issues found', 'success');
+    } else {
+        const message = `Found ${issues.errors.length} error(s), ${issues.warnings.length} warning(s), ${issues.suggestions.length} suggestion(s)`;
+        ui.showToast(message, issues.errors.length > 0 ? 'danger' : 'warning');
+    }
 }
 
 // Export for use in HTML onclick handlers
