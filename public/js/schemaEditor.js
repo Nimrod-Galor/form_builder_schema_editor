@@ -9,6 +9,8 @@ class SchemaManager {
         this.selectedStageId = null;
         this.editingStageId = null;
         this.editingFieldName = null;
+        this.autoSaveInterval = null;
+        this.hasUnsavedChanges = false;
     }
 
     // Initialize with a new schema
@@ -53,6 +55,7 @@ class SchemaManager {
     // Update schema ID
     updateSchemaId(id) {
         this.schema.id = id;
+        this.markAsChanged();
     }
 
     // Stage operations
@@ -78,6 +81,7 @@ class SchemaManager {
 
         this.schema.stages.push(newStage);
         this.updateFlattenedFields();
+        this.markAsChanged();
 
         return newStage;
     }
@@ -104,6 +108,7 @@ class SchemaManager {
         }
 
         this.updateFlattenedFields();
+        this.markAsChanged();
         return stage;
     }
 
@@ -115,6 +120,7 @@ class SchemaManager {
 
         this.schema.stages.splice(index, 1);
         this.updateFlattenedFields();
+        this.markAsChanged();
 
         if (this.selectedStageId === stageId) {
             this.selectedStageId = null;
@@ -137,6 +143,7 @@ class SchemaManager {
         this.schema.stages.splice(toIndex, 0, movedStage);
 
         this.updateFlattenedFields();
+        this.markAsChanged();
         return this.schema.stages;
     }
 
@@ -162,6 +169,7 @@ class SchemaManager {
 
         stage.fields.push(cleanField);
         this.updateFlattenedFields();
+        this.markAsChanged();
 
         return cleanField;
     }
@@ -188,6 +196,7 @@ class SchemaManager {
         const cleanField = this.cleanFieldData(fieldData);
         stage.fields[fieldIndex] = cleanField;
         this.updateFlattenedFields();
+        this.markAsChanged();
 
         return cleanField;
     }
@@ -205,6 +214,7 @@ class SchemaManager {
 
         stage.fields.splice(index, 1);
         this.updateFlattenedFields();
+        this.markAsChanged();
     }
 
     getField(stageId, fieldName) {
@@ -231,6 +241,7 @@ class SchemaManager {
         stage.fields.splice(toIndex, 0, movedField);
 
         this.updateFlattenedFields();
+        this.markAsChanged();
         return stage.fields;
     }
 
@@ -354,5 +365,66 @@ class SchemaManager {
         });
 
         return errors;
+    }
+
+    // Auto-save functionality
+    startAutoSave() {
+        // Auto-save every 30 seconds
+        this.autoSaveInterval = setInterval(() => {
+            if (this.hasUnsavedChanges) {
+                this.saveToLocalStorage();
+            }
+        }, 30000);
+
+        console.log('Auto-save started');
+    }
+
+    stopAutoSave() {
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+            this.autoSaveInterval = null;
+            console.log('Auto-save stopped');
+        }
+    }
+
+    saveToLocalStorage() {
+        try {
+            localStorage.setItem('formBuilder_schema', JSON.stringify(this.schema));
+            localStorage.setItem('formBuilder_timestamp', new Date().toISOString());
+            this.hasUnsavedChanges = false;
+            console.log('Schema auto-saved to localStorage');
+        } catch (error) {
+            console.error('Failed to save to localStorage:', error);
+        }
+    }
+
+    loadFromLocalStorage() {
+        try {
+            const savedSchema = localStorage.getItem('formBuilder_schema');
+            const timestamp = localStorage.getItem('formBuilder_timestamp');
+
+            if (savedSchema) {
+                const schema = JSON.parse(savedSchema);
+                return { schema, timestamp };
+            }
+        } catch (error) {
+            console.error('Failed to load from localStorage:', error);
+        }
+
+        return null;
+    }
+
+    clearLocalStorage() {
+        try {
+            localStorage.removeItem('formBuilder_schema');
+            localStorage.removeItem('formBuilder_timestamp');
+            console.log('localStorage cleared');
+        } catch (error) {
+            console.error('Failed to clear localStorage:', error);
+        }
+    }
+
+    markAsChanged() {
+        this.hasUnsavedChanges = true;
     }
 }

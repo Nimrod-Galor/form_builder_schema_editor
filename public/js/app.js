@@ -11,8 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize UI
     ui.init();
 
+    // Check for auto-saved data
+    checkForAutoSavedData();
+
+    // Start auto-save
+    schemaManager.startAutoSave();
+
     // Set up event handlers
     setupEventHandlers();
+
+    // Save before unload
+    window.addEventListener('beforeunload', (e) => {
+        if (schemaManager.hasUnsavedChanges) {
+            schemaManager.saveToLocalStorage();
+        }
+    });
 
     console.log('Form Schema Editor initialized');
 });
@@ -112,6 +125,34 @@ async function handleDownloadSchema() {
         console.error('Download error:', error);
         ui.showAlert('Download failed: ' + error.message, 'danger');
     }
+}
+
+// Check for auto-saved data
+function checkForAutoSavedData() {
+    const saved = schemaManager.loadFromLocalStorage();
+
+    if (saved && saved.schema) {
+        const timestamp = new Date(saved.timestamp);
+        const timeAgo = getTimeAgo(timestamp);
+
+        if (confirm(`Found auto-saved schema from ${timeAgo}. Would you like to restore it?`)) {
+            schemaManager.loadSchema(saved.schema);
+            ui.render();
+            ui.showAlert('Schema restored from auto-save', 'success');
+        } else {
+            schemaManager.clearLocalStorage();
+        }
+    }
+}
+
+// Get human-readable time ago string
+function getTimeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+    return `${Math.floor(seconds / 86400)} days ago`;
 }
 
 // Export for use in HTML onclick handlers
