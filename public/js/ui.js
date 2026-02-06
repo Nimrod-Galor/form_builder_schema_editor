@@ -55,6 +55,9 @@ class UIManager {
                             <button class="btn ${isSelected ? 'btn-light' : 'btn-outline-secondary'}" onclick="ui.openStageEditor('${stage.id}')" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </button>
+                            <button class="btn ${isSelected ? 'btn-light' : 'btn-outline-secondary'}" onclick="ui.duplicateStage('${stage.id}')" title="Duplicate">
+                                <i class="bi bi-copy"></i>
+                            </button>
                             <button class="btn ${isSelected ? 'btn-light' : 'btn-outline-danger'}" onclick="ui.deleteStage('${stage.id}')" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -132,6 +135,9 @@ class UIManager {
                                     <div class="btn-group btn-group-sm">
                                         <button class="btn btn-outline-primary" onclick="ui.openFieldEditor('${stage.id}', '${field.name}')" title="Edit">
                                             <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" onclick="ui.duplicateField('${stage.id}', '${field.name}')" title="Duplicate">
+                                            <i class="bi bi-copy"></i>
                                         </button>
                                         <button class="btn btn-outline-danger" onclick="ui.deleteField('${stage.id}', '${field.name}')" title="Delete">
                                             <i class="bi bi-trash"></i>
@@ -226,6 +232,18 @@ class UIManager {
         try {
             this.schemaManager.deleteStage(stageId);
             this.render();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    // Duplicate stage
+    duplicateStage(stageId) {
+        try {
+            const newStage = this.schemaManager.duplicateStage(stageId);
+            this.schemaManager.selectedStageId = newStage.id;
+            this.render();
+            this.showAlert('Stage duplicated successfully', 'success');
         } catch (error) {
             alert(error.message);
         }
@@ -619,6 +637,17 @@ class UIManager {
         try {
             this.schemaManager.deleteField(stageId, fieldName);
             this.render();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    // Duplicate field
+    duplicateField(stageId, fieldName) {
+        try {
+            this.schemaManager.duplicateField(stageId, fieldName);
+            this.render();
+            this.showAlert('Field duplicated successfully', 'success');
         } catch (error) {
             alert(error.message);
         }

@@ -131,6 +131,39 @@ class SchemaManager {
         return this.schema.stages.find(s => s.id === stageId);
     }
 
+    duplicateStage(stageId) {
+        const stage = this.getStage(stageId);
+        if (!stage) {
+            throw new Error('Stage not found');
+        }
+
+        // Create a copy with a new ID
+        let newId = `${stage.id}-copy`;
+        let counter = 1;
+
+        // Ensure unique ID
+        while (this.schema.stages.find(s => s.id === newId)) {
+            counter++;
+            newId = `${stage.id}-copy-${counter}`;
+        }
+
+        const duplicatedStage = {
+            ...stage,
+            id: newId,
+            label: `${stage.label} (Copy)`,
+            fields: stage.fields.map(field => ({ ...field })) // Deep copy fields
+        };
+
+        // Insert after the original stage
+        const index = this.schema.stages.findIndex(s => s.id === stageId);
+        this.schema.stages.splice(index + 1, 0, duplicatedStage);
+
+        this.updateFlattenedFields();
+        this.markAsChanged();
+
+        return duplicatedStage;
+    }
+
     reorderStages(fromIndex, toIndex) {
         if (fromIndex < 0 || fromIndex >= this.schema.stages.length ||
             toIndex < 0 || toIndex >= this.schema.stages.length) {
@@ -222,6 +255,43 @@ class SchemaManager {
         if (!stage) return null;
 
         return stage.fields.find(f => f.name === fieldName);
+    }
+
+    duplicateField(stageId, fieldName) {
+        const stage = this.schema.stages.find(s => s.id === stageId);
+        if (!stage) {
+            throw new Error('Stage not found');
+        }
+
+        const field = stage.fields.find(f => f.name === fieldName);
+        if (!field) {
+            throw new Error('Field not found');
+        }
+
+        // Create a copy with a new name
+        let newName = `${field.name}_copy`;
+        let counter = 1;
+
+        // Ensure unique name
+        while (this.schema.fields.find(f => f.name === newName)) {
+            counter++;
+            newName = `${field.name}_copy_${counter}`;
+        }
+
+        const duplicatedField = {
+            ...field,
+            name: newName,
+            label: field.label ? `${field.label} (Copy)` : undefined
+        };
+
+        // Insert after the original field
+        const index = stage.fields.findIndex(f => f.name === fieldName);
+        stage.fields.splice(index + 1, 0, duplicatedField);
+
+        this.updateFlattenedFields();
+        this.markAsChanged();
+
+        return duplicatedField;
     }
 
     reorderFields(stageId, fromIndex, toIndex) {
