@@ -17,6 +17,11 @@ class UIManager {
         this.renderStages();
         this.renderFields();
         this.updateSchemaInfo();
+
+        // Update preview if it exists and is visible
+        if (typeof updatePreview === 'function') {
+            updatePreview();
+        }
     }
 
     // Render stages list

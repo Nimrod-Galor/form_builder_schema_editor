@@ -343,3 +343,66 @@ label[for="uploadSchemaInput"] {
     opacity: 0.6;
     pointer-events: none;
 }
+
+/* Live Preview Panel */
+#previewPanel {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#previewPanel .card {
+    border: 2px solid #6c757d;
+}
+
+#previewPanel .card-header {
+    background-color: #6c757d;
+    border-bottom: 1px solid #5a6268;
+}
+
+#previewFormContainer {
+    min-height: 200px;
+    background-color: white;
+    border-radius: 0.25rem;
+}
+
+#previewStageIndicator {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+/* Preview controls */
+#previewControls {
+    margin-top: 1rem;
+}
+
+/* Toggle button icon transition */
+#togglePreviewBtn i {
+    transition: transform 0.2s ease;
+}
+
+#togglePreviewBtn:hover i {
+    transform: scale(1.1);
+}
+
+/* Responsive preview panel */
+@media (max-width: 768px) {
+    #previewPanel .card-body {
+        padding: 1rem;
+    }
+
+    #previewFormContainer {
+        min-height: 150px;
+    }
+}

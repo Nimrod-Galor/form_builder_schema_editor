@@ -1,12 +1,15 @@
 // Main Application - Initialize and wire up event handlers
 let schemaManager;
 let ui;
+let formPreview;
+let isPreviewVisible = false;
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Create instances
     schemaManager = new SchemaManager();
     ui = new UIManager(schemaManager);
+    formPreview = new FormPreview('previewFormContainer', 'previewControls', 'previewStageIndicator');
 
     // Initialize UI
     ui.init();
@@ -75,6 +78,10 @@ function setupEventHandlers() {
     document.getElementById('saveFieldBtn').addEventListener('click', () => {
         ui.saveField();
     });
+
+    // Preview toggle button
+    document.getElementById('togglePreviewBtn').addEventListener('click', togglePreview);
+    document.getElementById('closePreviewBtn').addEventListener('click', hidePreview);
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -215,5 +222,55 @@ function handleLintSchema() {
     }
 }
 
+// Toggle preview panel
+function togglePreview() {
+    if (isPreviewVisible) {
+        hidePreview();
+    } else {
+        showPreview();
+    }
+}
+
+// Show preview panel
+function showPreview() {
+    const previewPanel = document.getElementById('previewPanel');
+    const toggleBtn = document.getElementById('togglePreviewBtn');
+    const toggleText = document.getElementById('togglePreviewText');
+
+    previewPanel.classList.remove('d-none');
+    toggleText.textContent = 'Hide Preview';
+    toggleBtn.querySelector('i').className = 'bi bi-eye-slash';
+    isPreviewVisible = true;
+
+    // Update preview with current schema
+    updatePreview();
+}
+
+// Hide preview panel
+function hidePreview() {
+    const previewPanel = document.getElementById('previewPanel');
+    const toggleBtn = document.getElementById('togglePreviewBtn');
+    const toggleText = document.getElementById('togglePreviewText');
+
+    previewPanel.classList.add('d-none');
+    toggleText.textContent = 'Show Preview';
+    toggleBtn.querySelector('i').className = 'bi bi-eye';
+    isPreviewVisible = false;
+}
+
+// Update preview with current schema
+function updatePreview() {
+    if (!isPreviewVisible) return;
+
+    if (schemaManager.schema.stages.length === 0) {
+        formPreview.showError('No stages to preview. Create a stage to see the live preview.');
+        return;
+    }
+
+    // Load schema into preview
+    formPreview.loadSchema(schemaManager.schema);
+}
+
 // Export for use in HTML onclick handlers
 window.ui = ui;
+window.updatePreview = updatePreview;
