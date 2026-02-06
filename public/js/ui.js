@@ -40,7 +40,10 @@ class UIManager {
                 <div class="list-group-item ${isSelected ? 'active' : ''} stage-item"
                      data-stage-id="${stage.id}"
                      data-stage-index="${index}"
-                     draggable="true">
+                     draggable="true"
+                     role="listitem"
+                     aria-label="Stage: ${this.escapeHtml(stage.label)}, ${stage.fields.length} fields"
+                     tabindex="0">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="drag-handle" style="cursor: grab; padding-right: 8px;">
                             <i class="bi bi-grip-vertical"></i>

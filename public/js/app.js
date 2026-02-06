@@ -75,16 +75,44 @@ function setupEventHandlers() {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
+        // Skip if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            return;
+        }
+
         // Ctrl/Cmd + S to download
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {
             e.preventDefault();
-            handleDownloadSchema();
+            handleDownloadSchema('js');
         }
 
         // Ctrl/Cmd + N to new schema
         if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
             e.preventDefault();
             handleNewSchema();
+        }
+
+        // Ctrl/Cmd + O to upload
+        if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+            e.preventDefault();
+            document.getElementById('uploadSchemaInput').click();
+        }
+
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            // Bootstrap handles modal closing
+        }
+    });
+
+    // Add keyboard navigation for stages
+    document.addEventListener('keydown', (e) => {
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.classList.contains('stage-item')) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const stageId = activeElement.dataset.stageId;
+                ui.selectStage(stageId);
+            }
         }
     });
 }
