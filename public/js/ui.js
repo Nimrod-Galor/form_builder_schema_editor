@@ -202,7 +202,7 @@ class UIManager {
         const type = document.getElementById('stageType').value.trim();
 
         if (!id || !label) {
-            alert('Stage ID and label are required');
+            this.showError('Stage ID and label are required');
             return;
         }
 
@@ -223,7 +223,7 @@ class UIManager {
             this.stageModal.hide();
             this.render();
         } catch (error) {
-            alert(error.message);
+            this.showError(error.message);
         }
     }
 
@@ -237,7 +237,7 @@ class UIManager {
             this.schemaManager.deleteStage(stageId);
             this.render();
         } catch (error) {
-            alert(error.message);
+            this.showError(error.message);
         }
     }
 
@@ -247,9 +247,9 @@ class UIManager {
             const newStage = this.schemaManager.duplicateStage(stageId);
             this.schemaManager.selectedStageId = newStage.id;
             this.render();
-            this.showAlert('Stage duplicated successfully', 'success');
+            this.showToast('Stage duplicated successfully', 'success');
         } catch (error) {
-            alert(error.message);
+            this.showError(error.message);
         }
     }
 
@@ -515,7 +515,7 @@ class UIManager {
     saveField() {
         const stageId = this.schemaManager.selectedStageId;
         if (!stageId) {
-            alert('No stage selected');
+            this.showError('No stage selected');
             return;
         }
 
@@ -533,7 +533,7 @@ class UIManager {
             this.fieldModal.hide();
             this.render();
         } catch (error) {
-            alert(error.message);
+            this.showError(error.message);
         }
     }
 
@@ -642,7 +642,7 @@ class UIManager {
             this.schemaManager.deleteField(stageId, fieldName);
             this.render();
         } catch (error) {
-            alert(error.message);
+            this.showError(error.message);
         }
     }
 
@@ -653,7 +653,7 @@ class UIManager {
             this.render();
             this.showAlert('Field duplicated successfully', 'success');
         } catch (error) {
-            alert(error.message);
+            this.showError(error.message);
         }
     }
 
@@ -682,23 +682,70 @@ class UIManager {
         return iconMap[type] || 'bi-circle';
     }
 
-    // Show alert
+    // Show alert (kept for backward compatibility)
     showAlert(message, type = 'info') {
-        // Create alert element
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-        alert.style.zIndex = '9999';
-        alert.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        this.showToast(message, type);
+    }
+
+    // Show toast notification
+    showToast(message, type = 'info', title = '') {
+        const toastContainer = document.getElementById('toastContainer');
+
+        // Create toast element
+        const toastId = 'toast-' + Date.now();
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type === 'danger' ? 'danger' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'primary'} border-0`;
+        toast.id = toastId;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        const iconMap = {
+            success: 'bi-check-circle-fill',
+            danger: 'bi-x-circle-fill',
+            warning: 'bi-exclamation-triangle-fill',
+            info: 'bi-info-circle-fill'
+        };
+
+        const defaultTitles = {
+            success: 'Success',
+            danger: 'Error',
+            warning: 'Warning',
+            info: 'Info'
+        };
+
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi ${iconMap[type] || iconMap.info} me-2"></i>
+                    <strong>${title || defaultTitles[type] || 'Notification'}:</strong> ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
         `;
 
-        document.body.appendChild(alert);
+        toastContainer.appendChild(toast);
 
-        // Auto remove after 3 seconds
-        setTimeout(() => {
-            alert.remove();
-        }, 3000);
+        const bsToast = new bootstrap.Toast(toast, {
+            autohide: true,
+            delay: 4000
+        });
+
+        bsToast.show();
+
+        // Remove from DOM after hidden
+        toast.addEventListener('hidden.bs.toast', () => {
+            toast.remove();
+        });
+    }
+
+    // Show error with details
+    showError(message, details = null) {
+        let fullMessage = message;
+        if (details) {
+            fullMessage += ` (${details})`;
+        }
+        this.showToast(fullMessage, 'danger', 'Error');
     }
 
     // Setup drag and drop for stages
