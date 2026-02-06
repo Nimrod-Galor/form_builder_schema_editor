@@ -1,5 +1,5 @@
 {
-  "name": "FORM-BUILDER-SCHEMA-EDITOR",
+  "name": "form-builder-schema-editor",
   "version": "1.0.0",
   "description": "Web-based schema editor for multi-step form configurations",
   "main": "server.js",

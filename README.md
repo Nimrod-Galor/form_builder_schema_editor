@@ -44,7 +44,7 @@ A web-based visual editor for creating and managing multi-step form schemas. Bui
 
 1. **Clone or download the project**
    ```bash
-   cd FORM-BUILDER-SCHEMA-EDITOR
+   cd form-builder-schema-editor
    ```
 
 2. **Install dependencies**
@@ -160,7 +160,7 @@ Add validation attributes and custom error messages:
 ## Project Structure
 
 ```
-FORM-BUILDER-SCHEMA-EDITOR/
+form-builder-schema-editor/
 ├── server.js                 # Express server
 ├── package.json
 ├── README.md
