@@ -157,6 +157,34 @@ Add validation attributes and custom error messages:
 }
 ```
 
+## Using Your Schema
+
+The schemas created with this editor are designed to be used with the [Form Builder](https://github.com/Nimrod-Galor/form_builder) frontend library.
+
+### Integration Steps
+
+1. **Generate your schema** using this editor
+2. **Download** the schema in your preferred format (JavaScript or JSON)
+3. **Import** the schema in your frontend application
+4. **Pass** the schema to the Form Builder component
+
+### Example Integration
+
+```javascript
+// Import your generated schema
+import { formSchema } from './schemas/my-form-schema.js';
+
+// Use with Form Builder
+import FormBuilder from 'form-builder';
+
+const formBuilder = new FormBuilder({
+  schema: formSchema,
+  container: '#form-container'
+});
+```
+
+For complete documentation and examples, visit the [Form Builder repository](https://github.com/Nimrod-Galor/form_builder).
+
 ## Project Structure
 
 ```
