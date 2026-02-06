@@ -35,7 +35,20 @@ function setupEventHandlers() {
     // Toolbar buttons
     document.getElementById('newSchemaBtn').addEventListener('click', handleNewSchema);
     document.getElementById('uploadSchemaInput').addEventListener('change', handleUploadSchema);
-    document.getElementById('downloadSchemaBtn').addEventListener('click', handleDownloadSchema);
+
+    // Download format buttons
+    document.getElementById('downloadJsBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleDownloadSchema('js');
+    });
+    document.getElementById('downloadJsonBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleDownloadSchema('json');
+    });
+    document.getElementById('downloadMinifiedBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleDownloadSchema('minified');
+    });
 
     // Schema ID input
     document.getElementById('schemaIdInput').addEventListener('change', (e) => {
@@ -108,7 +121,7 @@ async function handleUploadSchema(e) {
 }
 
 // Handle download schema
-async function handleDownloadSchema() {
+async function handleDownloadSchema(format = 'js') {
     // Validate schema before download
     const errors = schemaManager.validateSchema();
     if (errors.length > 0) {
@@ -119,8 +132,9 @@ async function handleDownloadSchema() {
     }
 
     try {
-        await schemaManager.downloadSchema();
-        ui.showAlert('Schema downloaded successfully', 'success');
+        await schemaManager.downloadSchema(format);
+        const formatNames = { js: 'JavaScript', json: 'JSON', minified: 'Minified JSON' };
+        ui.showAlert(`Schema downloaded as ${formatNames[format]}`, 'success');
     } catch (error) {
         console.error('Download error:', error);
         ui.showAlert('Download failed: ' + error.message, 'danger');

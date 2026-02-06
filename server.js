@@ -98,18 +98,38 @@ app.post('/upload', upload.single('schemaFile'), (req, res) => {
 // Download schema file
 app.post('/download', (req, res) => {
   try {
-    const { schema } = req.body;
+    const { schema, format = 'js' } = req.body;
 
     if (!schema) {
       return res.status(400).json({ error: 'No schema provided' });
     }
 
-    // Generate JavaScript file content
-    const fileContent = generateSchemaFile(schema);
+    let fileContent, contentType, filename;
+
+    switch (format) {
+      case 'json':
+        fileContent = JSON.stringify(schema, null, 2);
+        contentType = 'application/json';
+        filename = `schema.${schema.id || 'export'}.json`;
+        break;
+
+      case 'minified':
+        fileContent = JSON.stringify(schema);
+        contentType = 'application/json';
+        filename = `schema.${schema.id || 'export'}.min.json`;
+        break;
+
+      case 'js':
+      default:
+        fileContent = generateSchemaFile(schema);
+        contentType = 'application/javascript';
+        filename = `schema.${schema.id || 'export'}.js`;
+        break;
+    }
 
     // Set headers for file download
-    res.setHeader('Content-Type', 'application/javascript');
-    res.setHeader('Content-Disposition', `attachment; filename="schema.${schema.id || 'export'}.js"`);
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
 
     res.send(fileContent);
   } catch (error) {

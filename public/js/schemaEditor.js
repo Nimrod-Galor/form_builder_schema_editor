@@ -366,13 +366,13 @@ class SchemaManager {
     }
 
     // Download schema
-    async downloadSchema() {
+    async downloadSchema(format = 'js') {
         const response = await fetch('/download', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ schema: this.schema })
+            body: JSON.stringify({ schema: this.schema, format })
         });
 
         if (!response.ok) {
@@ -385,7 +385,11 @@ class SchemaManager {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `schema.${this.schema.id}.js`;
+
+        // Set filename based on format
+        const extensions = { js: '.js', json: '.json', minified: '.min.json' };
+        a.download = `schema.${this.schema.id}${extensions[format]}`;
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
