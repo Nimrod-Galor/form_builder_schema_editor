@@ -369,22 +369,63 @@ label[for="uploadSchemaInput"] {
     border-bottom: 1px solid #5a6268;
 }
 
-#previewFormContainer {
-    min-height: 200px;
-    background-color: white;
-    border-radius: 0.25rem;
+/* Stage indicator (from FormBuilderBase) */
+.stage-indicator {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 16px;
 }
 
-#previewStageIndicator {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    padding: 1rem;
+.stage-indicator__steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-/* Preview controls */
-#previewControls {
-    margin-top: 1rem;
+.stage-step {
+    flex: 1;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: #e2e8f0;
+    color: #475569;
+    cursor: default;
+}
+
+.stage-step--done {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #166534;
+    cursor: pointer;
+}
+
+.stage-step--current {
+    background: #2563eb;
+    border-color: #1d4ed8;
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.2);
+}
+
+.stage-step--undone {
+    background: #f1f5f9;
+    border-color: #cbd5f5;
+    color: #94a3b8;
+}
+
+.stage-step--next {
+    background: #dbeafe;
+    border-color: #60a5fa;
+    color: #1e3a8a;
+    cursor: pointer;
+}
+
+.stage-step:disabled {
+    opacity: 1;
 }
 
 /* Toggle button icon transition */
@@ -400,9 +441,5 @@ label[for="uploadSchemaInput"] {
 @media (max-width: 768px) {
     #previewPanel .card-body {
         padding: 1rem;
-    }
-
-    #previewFormContainer {
-        min-height: 150px;
     }
 }

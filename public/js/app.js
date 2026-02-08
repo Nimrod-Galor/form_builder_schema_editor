@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create instances
     schemaManager = new SchemaManager();
     ui = new UIManager(schemaManager);
-    formPreview = new FormPreview('previewFormContainer', 'previewControls', 'previewStageIndicator');
+    formPreview = new FormPreview(document.getElementById('previewRoot'));
 
     // Initialize UI
     ui.init();

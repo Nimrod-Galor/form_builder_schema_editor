@@ -142,21 +142,10 @@
                     </div>
                     <div class="card-body bg-light">
                         <div class="mx-auto" style="max-width: 640px;">
-                            <div class="card shadow-sm">
+                            <div id="previewRoot" class="card shadow-sm">
                                 <div class="card-body">
-                                    <div class="mb-4">
-                                        <h2 class="h5 mb-3 text-center">Form Preview</h2>
-                                        <div id="previewStageIndicator" class="d-none"></div>
-                                    </div>
-                                    <div id="previewFormContainer">
-                                        <!-- Form will be rendered here -->
-                                    </div>
-                                    <div id="previewControls" class="d-flex flex-column flex-sm-row gap-2 mt-4" style="display: none !important;">
-                                        <button type="button" id="previewPrev" class="btn btn-outline-secondary flex-fill">Previous</button>
-                                        <button type="button" id="previewNext" class="btn btn-primary flex-fill">Next</button>
-                                        <button type="button" id="previewSubmit" class="btn btn-success flex-fill">Submit</button>
-                                        <button type="button" id="previewReset" class="btn btn-outline-danger flex-fill">Reset</button>
-                                    </div>
+                                    <h2 class="h5 mb-3 text-center">Form Preview</h2>
+                                    <form novalidate></form>
                                 </div>
                             </div>
                         </div>
@@ -231,7 +220,7 @@
     <!-- Application JS -->
     <script src="js/schemaEditor.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/formPreview.js"></script>
+    <script src="js/formPreview.bundle.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
